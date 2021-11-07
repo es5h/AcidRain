@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+    <div id="gameBoard">
+        <span id="wordTest">def</span>
+    </div>
+
+    <div id="controlPanel">
+        <input type="text" id="inputBox">
+        <input type="button" id="startButton" value="start">
+    </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="application/javascript">
+
+    let words = ["abc", "def", "ghi"];
+
+    function generateWord() {
+        $("#gameBoard").append('<span id="word">' + words[0] + '</span>');
+    }
+
+    function gravity(){
+        $("#wordTest").animate( {top : "3000px"} , 1000);
+    }
+
+    function game(){
+        generateWord();
+        gravity();
+    }
+
+    $("#startButton").click(function() {
+        $("#wordTest").animate( {top : "3000px"} , 1000);
+        game();
+    })
+
+    $("#inputBox").keypress(function (key) {
+        if (key.keyCode == 13) {
+            $("#inputBox").val('');
+        }
+    })
+
+</script>
+<style>
+    #gameBoard{
+        border: 1px solid black;
+        width: 200px;
+        height: 400px;
+    }
+
+</style>
+</html>
