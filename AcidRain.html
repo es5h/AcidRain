@@ -75,6 +75,7 @@
 
         if(droppedScore > 10 && !gameOver){
             alert("game over")
+            location.reload();
             gaveOver=1;
             return;
         }
@@ -135,7 +136,7 @@
         border: 1px solid black;
         width: 400px;
         height: 400px;
-        //overflow: hidden;
+        overflow: hidden;
     }
 
     #wordTest {
