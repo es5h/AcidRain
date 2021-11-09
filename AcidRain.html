@@ -8,12 +8,24 @@
 
 <body>
     <div id="gameBoard">
-        <div id="wordTest">abc</div>
+        <div id="baseline" type="hidden"></div>
+        <!--<div id="wordTest" style="margin-left : 30px">abc</div>
+        -->
     </div>
 
     <div id="controlPanel">
         <div><input type="text" id="inputBox"></div>
         <div><input type="button" id="startButton" value="Start"></div>
+        <div>
+            <ul>
+                <li> 점수판 </li>
+                <ul>
+                    <li> 맞춘 갯수 : <span id="correctScore"></span> </li>
+                    <li> 잘못 입력 : <span id="wrongTypeScore"></span> </li>
+                    <li> 떨어진 갯수 : <span id="droppedScore"></span> </li>
+                </ul>
+            </ul>
+        </div>
     </div>
 </body>
 
@@ -21,43 +33,96 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="application/javascript">
 
-    let words = new Array('abc','def','ghi');
+    let wordsList = new Array('abc','def','ghi'
+    ,'as','df','asdf', 'afsd', 'dssd','eqrw','wer');
+
+    let wordsLength = wordsList.length;
+
+    let correctScore = 0;
+    let wrongTypeScore=0;
+    let droppedScore=0;
+
+    let gameOver=0;
+    let count=0;
+
+    //Todo : make array shuffled
 
     $(document).ready(function(){
         $("#startButton").click(function() {
+            shuffledWordsList();
             gameRoutine();
         })
     });
 
-    function gravity(){
-        var wordPosition = $("#wordTest").offset();
-        console.log($("#wordTest").offset());
-        $("#wordTest").css('margin-top', wordPosition.top + 10);
-    }
 
-    function generateWord() {
-        $("#wordTest").before('<div id="wordTest">' + words[0] + '</div>');
-    }
 
     function gameRoutine(){
         generateWord();
-        gravity();
+        droppedWordCheck();
+        displayScoreboard();
+
+        if(droppedScore > 10 && !gameOver){
+            alert("game over")
+            gaveOver=1;
+            return;
+        }
         setTimeout("gameRoutine()",1000);
+        return;
+    }
+
+    function generateWord() {
+        let randomLeft = Math.floor(Math.random() * 170);
+        $('<div id="words"></div>').text(wordsList[(count++)%wordsLength])
+        .prependTo('#baseline').css('margin-left', randomLeft);
+    }
+
+    function droppedWordCheck(){
+        $("[id='words']").each(function(){
+            if($(this).offset().top > 400){
+                droppedScore++;
+                $(this).text("떨어짐"); //치트 입력시 점수 오름
+                $(this).css('visibility','hidden')
+                .attr('id','dropped');
+            }
+        })
+    }
+
+    function displayScoreboard(){
+        $("#correctScore").text(correctScore);
+        $("#wrongTypeScore").text(wrongTypeScore);
+        $("#droppedScore").text(droppedScore);
     }
 
     $("#inputBox").keypress(function (key) {
         if (key.keyCode == 13) {
+            checkWordInBoard($("#inputBox").val());
             $("#inputBox").val('');
         }
     })
 
+    function checkWordInBoard(content){
+        let flag=0;
+        $("[id='words']").each(function(){
+            if($(this).text()==content){
+                $(this).text("치트"); //치트 입력시 점수 오름
+                $(this).css('visibility','hidden')
+                .attr('id','correct');
+
+                correctScore++;
+                flag=1;
+            }
+        })
+        if(!flag) wrongTypeScore++;
+    }
+
 </script>
 
 <style>
-    #gameBoard{
+    #gameBoard {
         border: 1px solid black;
         width: 200px;
         height: 400px;
+        //overflow: hidden;
     }
 
     #wordTest {
