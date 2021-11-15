@@ -43,7 +43,6 @@
     let wrongTypeScore=0;
     let droppedScore=0;
 
-    let gameOver=0;
     let count=0;
 
     //Todo : make array shuffled
@@ -73,10 +72,9 @@
         droppedWordCheck();
         displayScoreboard();
 
-        if(droppedScore > 10 && !gameOver){
+        if(droppedScore > 10){
             alert("game over")
             location.reload();
-            gaveOver=1;
             return;
         }
         setTimeout("gameRoutine()",1000);
@@ -85,17 +83,21 @@
 
     function generateWord() {
         let randomLeft = Math.floor(Math.random() * 300);
-        $('<div id="words"></div>').text(wordsList[(count++)%wordsLength])
-        .prependTo('#baseline').css('margin-left', randomLeft);
+        $('<div class="words"></div>')
+            .text(wordsList[(count++)%wordsLength])
+            .prependTo('#baseline')
+            .css('margin-left', randomLeft);
     }
 
     function droppedWordCheck(){
-        $("[id='words']").each(function(){
-            if($(this).offset().top > 400){
+        $(".words").each(function(){
+            var $word = $(this);
+            if($word.offset().top > 400){
                 droppedScore++;
-                $(this).text("떨어짐"); //치트 입력시 점수 오름
-                $(this).css('visibility','hidden')
-                .attr('id','dropped');
+                $word
+                    .data('isOnBoard', 1)
+                    .css('visibility','hidden')
+                    .prop('class','dropped');
             }
         })
     }
@@ -108,20 +110,22 @@
 
     $("#inputBox").keypress(function (key) {
         if (key.keyCode == 13) {
-            checkWordInBoard($("#inputBox").val());
-            $("#inputBox").val('');
+            checkWordInBoard($(this).val());
+            $(this).val('');
             displayScoreboard();
         }
     })
 
     function checkWordInBoard(content){
         let flag=0;
-        $("[id='words']").each(function(){
-            if($(this).text()==content){
-                $(this).text("치트"); //치트 입력시 점수 오름
-                $(this).css('visibility','hidden')
-                .attr('id','correct');
 
+        $(".words").each(function(){
+            var $word = $(this)
+            if($word.text()==content){
+                $word
+                    .data('isOnBoard', 1)
+                    .css('visibility','hidden')
+                    .prop('class','correct');
                 correctScore++;
                 flag=1;
             }
